@@ -79,6 +79,9 @@ function initApp() {
     // 設置事件監聽器
     setupEventListeners();
     
+    // 確保輸入框是啟用狀態
+    answerInput.disabled = false;
+    
     // 顯示主選單
     showScreen('mainMenu');
 }
@@ -93,25 +96,68 @@ function loadDefaultContent() {
     parseContent(contentText);
 }
 
-// 解析內容輸入
+// 解析內容輸入 - 修正版本，支援多種分隔符號
 function parseContent(contentText) {
     const lines = contentText.split('\n').filter(line => line.trim() !== '');
     state.settings.content = [];
     
     lines.forEach(line => {
-        const parts = line.split(',').map(part => part.trim());
-        if (parts.length >= 2) {
+        // 去除首尾空格
+        line = line.trim();
+        
+        // 嘗試不同的分隔符號：逗號、全形逗號、空格
+        let front, back;
+        
+        // 檢查是否包含逗號
+        if (line.includes(',') || line.includes('，')) {
+            // 使用逗號或全形逗號分隔
+            const separator = line.includes(',') ? ',' : '，';
+            const parts = line.split(separator);
+            
+            if (parts.length >= 2) {
+                front = parts[0].trim();
+                back = parts.slice(1).join(separator).trim(); // 處理後半句可能包含逗號的情況
+            }
+        } 
+        // 檢查是否包含空格
+        else if (line.includes(' ')) {
+            const parts = line.split(' ');
+            if (parts.length >= 2) {
+                front = parts[0].trim();
+                back = parts.slice(1).join(' ').trim();
+            }
+        }
+        
+        // 如果解析成功，添加到內容列表
+        if (front && back) {
             state.settings.content.push({
-                front: parts[0],
-                back: parts[1]
+                front: front,
+                back: back
             });
+        } else {
+            // 如果無法解析，嘗試使用最後一個逗號分割
+            const lastCommaIndex = Math.max(line.lastIndexOf(','), line.lastIndexOf('，'));
+            if (lastCommaIndex > 0) {
+                front = line.substring(0, lastCommaIndex).trim();
+                back = line.substring(lastCommaIndex + 1).trim();
+                
+                if (front && back) {
+                    state.settings.content.push({
+                        front: front,
+                        back: back
+                    });
+                }
+            }
         }
     });
     
     // 如果解析到的內容為空，使用預設內容
     if (state.settings.content.length === 0) {
+        console.log('解析內容為空，使用預設內容');
         state.settings.content = [...defaultContent];
     }
+    
+    console.log('解析後的內容:', state.settings.content);
 }
 
 // 設置事件監聽器
@@ -188,9 +234,14 @@ function showScreen(screenName) {
     if (screenName === 'quizScreen') {
         initQuiz();
     }
+    
+    // 如果切換到主選單，確保輸入框啟用
+    if (screenName === 'mainMenu') {
+        answerInput.disabled = false;
+    }
 }
 
-// 儲存設定並開始測驗
+// 儲存設定並開始測驗 - 修正版本，確保正確儲存新內容
 function saveSettingsAndStart() {
     // 解析內容
     parseContent(contentInput.value);
@@ -202,6 +253,16 @@ function saveSettingsAndStart() {
     const selectedMode = document.querySelector('input[name="mode"]:checked');
     if (selectedMode) {
         state.settings.mode = selectedMode.value;
+    }
+    
+    console.log('儲存設定後的內容:', state.settings.content);
+    console.log('題目數量:', state.settings.questionCount);
+    console.log('模式:', state.settings.mode);
+    
+    // 檢查是否有內容
+    if (state.settings.content.length === 0) {
+        alert('請輸入至少一則成語或名句！');
+        return;
     }
     
     // 開始測驗
@@ -224,6 +285,7 @@ function startQuiz() {
     
     // 確保輸入框啟用
     answerInput.disabled = false;
+    answerInput.focus();
     
     // 準備測驗題目
     prepareQuizQuestions();
@@ -246,12 +308,18 @@ function prepareQuizQuestions() {
         mistakes: []
     };
     
+    console.log('準備測驗題目，可用內容:', content);
+    
     // 如果要求的題數多於可用內容，則使用所有內容
     const questionCountToUse = Math.min(questionCount, content.length);
+    
+    console.log('預計題數:', questionCountToUse);
     
     // 隨機選擇題目
     const shuffled = [...content].sort(() => Math.random() - 0.5);
     state.quiz.questions = shuffled.slice(0, questionCountToUse);
+    
+    console.log('選中的題目:', state.quiz.questions);
     
     // 更新顯示
     totalQuestionsEl.textContent = questionCountToUse;
@@ -274,8 +342,6 @@ function initQuiz() {
     feedbackSection.className = 'feedback-section';
     nextQuestionBtn.style.display = 'none';
     submitAnswerBtn.style.display = 'inline-flex';
-    
-    // 重置按鈕文字（在嚴格模式下可能會被改變）
     submitAnswerBtn.textContent = '提交答案';
     submitAnswerBtn.innerHTML = '<i class="fas fa-paper-plane"></i> 提交答案';
 }
@@ -284,7 +350,10 @@ function initQuiz() {
 function updateQuizDisplay() {
     const { currentQuestionIndex, questions, correctAnswers, incorrectAnswers } = state.quiz;
     
-    if (questions.length === 0) return;
+    if (questions.length === 0) {
+        console.error('沒有題目可以顯示！');
+        return;
+    }
     
     // 更新進度條
     const progress = ((currentQuestionIndex) / questions.length) * 100;
@@ -297,17 +366,25 @@ function updateQuizDisplay() {
     
     // 顯示當前題目
     const currentQuestion = questions[currentQuestionIndex];
+    console.log('顯示題目:', currentQuestion);
     questionTextEl.textContent = currentQuestion.front;
 }
 
 // 提交答案
 function submitAnswer() {
     const { currentQuestionIndex, questions } = state.quiz;
+    
+    if (!questions || questions.length === 0) {
+        console.error('沒有題目！');
+        return;
+    }
+    
     const currentQuestion = questions[currentQuestionIndex];
     const userAnswer = answerInput.value.trim();
     
     if (!userAnswer) {
         showFeedback('請輸入答案！', 'incorrect');
+        answerInput.focus();
         return;
     }
     
@@ -319,6 +396,10 @@ function submitAnswer() {
     const normalizedCorrectAnswer = currentQuestion.back.replace(/\s+/g, '');
     
     const isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
+    
+    console.log('使用者答案:', userAnswer);
+    console.log('正確答案:', currentQuestion.back);
+    console.log('是否正確:', isCorrect);
     
     if (isCorrect) {
         state.quiz.correctAnswers++;
@@ -337,7 +418,7 @@ function submitAnswer() {
     if (state.settings.mode === 'strict' && !isCorrect) {
         // 嚴格模式：答錯時不能直接下一題，需要重新輸入
         answerInput.value = '';
-        answerInput.disabled = false;  // 確保輸入框啟用
+        answerInput.disabled = false;
         answerInput.focus();
         submitAnswerBtn.textContent = '重新提交';
         submitAnswerBtn.innerHTML = '<i class="fas fa-redo"></i> 重新提交';
@@ -426,7 +507,6 @@ function displayMistakes(mistakes) {
     mistakesSection.innerHTML = mistakesHTML;
 }
 
-// 重新開始測驗
 // 重新開始測驗
 function restartQuiz() {
     // 確保輸入框是啟用狀態
