@@ -56,28 +56,49 @@ const finalTotalCount = document.getElementById('finalTotalCount');
 const accuracyValue = document.getElementById('accuracyValue');
 const accuracyFill = document.getElementById('accuracyFill');
 const mistakesSection = document.getElementById('mistakesSection');
-const sampleItems = document.querySelectorAll('.sample-item');
 const loadSampleBtn = document.getElementById('loadSampleBtn');
 
 // 預設內容
 const defaultContent = [
+    { front: "會挽雕弓如滿月", back: "西北望，射天狼" },
+    { front: "老驥伏櫪", back: "志在千里；烈士暮年，壯心不已" },
+    { front: "停杯投箸不能食", back: "拔劍四顧心茫然。欲渡黃河冰塞川，將登太行雪滿山" },
+    { front: "濁酒一杯定萬里", back: "燕然未勒歸無計，羌管悠悠霜滿地。人不寐，將軍白髮征夫淚" },
+    { front: "閒來垂釣碧溪上", back: "忽復乘舟夢日邊" },
+    { front: "春眠不覺曉", back: "處處聞啼鳥" },
+    { front: "春潮帶雨晚來急", back: "野渡無人舟自橫" },
+    { front: "春種一粒粟", back: "秋收萬顆子" },
+    { front: "春風十里揚州路", back: "卷上珠簾總不如" },
+    { front: "雲想衣裳花想容", back: "春風拂檻露華濃" },
+    { front: "一日不見", back: "如三秋兮" },
+    { front: "輔車相依", back: "唇亡齒寒" },
+    { front: "欲加之罪", back: "何患無辭" },
+    { front: "禍兮", back: "福之所倚；福兮，福之所伏" },
+    { front: "人無遠慮", back: "必有近憂" },
+    { front: "歲寒", back: "然後知松柏之後凋也" },
+    { front: "其身正", back: "不令而行；其身不正，雖令不從" },
+    { front: "同聲相應", back: "同氣相求" },
+    { front: "長太息以掩涕兮", back: "民生之多艱" },
+    { front: "舉世皆濁我獨清", back: "眾人皆醉我獨醒" },
+    { front: "苟余心之端直兮", back: "雖其何傷" },
+    { front: "其曲彌高", back: "其和彌寡" },
+    { front: "富貴不能濕", back: "貧賤不能移，威武不能屈" },
+    { front: "青，取之於藍", back: "而青於藍" },
+    { front: "避其銳氣", back: "擊其惰歸" },
+    { front: "靜若處女", back: "動若脫兔" },
+    { front: "螳螂捕蟬", back: "黃雀在後" },
+    { front: "不鳴則已", back: "一鳴驚人" },
     { front: "桃李不言", back: "下自成蹊" },
-    { front: "己所不欲", back: "勿施於人" },
-    { front: "學而不厭", back: "誨人不倦" },
-    { front: "有朋自遠方來", back: "不亦樂乎" },
-    { front: "溫故而知新", back: "可以為師矣" },
-    { front: "知之為知之", back: "不知為不知" },
-    { front: "三人行", back: "必有我師焉" },
-    { front: "君子坦蕩蕩", back: "小人長戚戚" }
+    { front: "不入虎穴", back: "焉得虎子" }
 ];
 
 // 初始化應用
 function initApp() {
-    // 載入預設內容到設定區域
-    loadDefaultContent();
-    
     // 設置事件監聽器
     setupEventListeners();
+    
+    // 載入預設內容
+    loadDefaultContent();
     
     // 確保輸入框是啟用狀態
     answerInput.disabled = false;
@@ -94,70 +115,82 @@ function loadDefaultContent() {
     
     // 解析內容
     parseContent(contentText);
+    
+    // 動態生成主選單的預設內容列表
+    updateDefaultContentList();
+    
+    // 動態生成設定畫面的示例內容
+    updateSampleItems();
 }
 
-// 解析內容輸入 - 修正版本，支援多種分隔符號
+// 更新主選單的預設內容列表
+function updateDefaultContentList() {
+    const defaultListContainer = document.getElementById('defaultListContainer');
+    if (!defaultListContainer) return;
+    
+    defaultListContainer.innerHTML = '';
+    
+    // 顯示前10個項目，其餘用省略號表示
+    const displayCount = Math.min(defaultContent.length, 10);
+    
+    for (let i = 0; i < displayCount; i++) {
+        const item = defaultContent[i];
+        const li = document.createElement('div');
+        li.className = 'default-item';
+        li.textContent = `${item.front}，${item.back}`;
+        defaultListContainer.appendChild(li);
+    }
+    
+    if (defaultContent.length > 10) {
+        const moreInfo = document.createElement('div');
+        moreInfo.className = 'more-items';
+        moreInfo.textContent = `... 還有 ${defaultContent.length - 10} 句`;
+        defaultListContainer.appendChild(moreInfo);
+    }
+}
+
+// 更新設定畫面的示例內容
+function updateSampleItems() {
+    const sampleItemsContainer = document.getElementById('sampleItemsContainer');
+    if (!sampleItemsContainer) return;
+    
+    sampleItemsContainer.innerHTML = '';
+    
+    // 顯示所有示例項目
+    defaultContent.forEach(item => {
+        const sampleItem = document.createElement('span');
+        sampleItem.className = 'sample-item';
+        sampleItem.setAttribute('data-text', `${item.front},${item.back}`);
+        sampleItem.textContent = `${item.front}，${item.back}`;
+        sampleItemsContainer.appendChild(sampleItem);
+        
+        // 添加點擊事件
+        sampleItem.addEventListener('click', () => {
+            const text = sampleItem.getAttribute('data-text');
+            contentInput.value += (contentInput.value ? '\n' : '') + text;
+        });
+    });
+}
+
+// 解析內容輸入 - 增強版本，支援多種分隔符號和複雜格式
 function parseContent(contentText) {
     const lines = contentText.split('\n').filter(line => line.trim() !== '');
     state.settings.content = [];
     
     lines.forEach(line => {
-        // 去除首尾空格
-        line = line.trim();
-        
-        // 嘗試不同的分隔符號：逗號、全形逗號、空格
-        let front, back;
-        
-        // 檢查是否包含逗號
-        if (line.includes(',') || line.includes('，')) {
-            // 使用逗號或全形逗號分隔
-            const separator = line.includes(',') ? ',' : '，';
-            const parts = line.split(separator);
-            
-            if (parts.length >= 2) {
-                front = parts[0].trim();
-                back = parts.slice(1).join(separator).trim(); // 處理後半句可能包含逗號的情況
-            }
-        } 
-        // 檢查是否包含空格
-        else if (line.includes(' ')) {
-            const parts = line.split(' ');
-            if (parts.length >= 2) {
-                front = parts[0].trim();
-                back = parts.slice(1).join(' ').trim();
-            }
-        }
-        
-        // 如果解析成功，添加到內容列表
-        if (front && back) {
+        const parts = line.split(',').map(part => part.trim());
+        if (parts.length >= 2) {
             state.settings.content.push({
-                front: front,
-                back: back
+                front: parts[0],
+                back: parts[1]
             });
-        } else {
-            // 如果無法解析，嘗試使用最後一個逗號分割
-            const lastCommaIndex = Math.max(line.lastIndexOf(','), line.lastIndexOf('，'));
-            if (lastCommaIndex > 0) {
-                front = line.substring(0, lastCommaIndex).trim();
-                back = line.substring(lastCommaIndex + 1).trim();
-                
-                if (front && back) {
-                    state.settings.content.push({
-                        front: front,
-                        back: back
-                    });
-                }
-            }
         }
     });
     
     // 如果解析到的內容為空，使用預設內容
     if (state.settings.content.length === 0) {
-        console.log('解析內容為空，使用預設內容');
         state.settings.content = [...defaultContent];
     }
-    
-    console.log('解析後的內容:', state.settings.content);
 }
 
 // 設置事件監聽器
@@ -204,14 +237,6 @@ function setupEventListeners() {
     modeInputs.forEach(input => {
         input.addEventListener('change', (e) => {
             state.settings.mode = e.target.value;
-        });
-    });
-    
-    // 示例內容點擊事件
-    sampleItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const text = item.getAttribute('data-text');
-            contentInput.value += (contentInput.value ? '\n' : '') + text;
         });
     });
     
