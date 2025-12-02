@@ -36,14 +36,10 @@
                 
                 <!-- 預設內容說明 -->
                 <div class="default-content">
-                    <h3><i class="fas fa-lightbulb"></i> 預設練習內容</h3>
-                    <ul id="defaultList">
-                        <li>桃李不言，下自成蹊</li>
-                        <li>己所不欲，勿施於人</li>
-                        <li>學而不厭，誨人不倦</li>
-                        <li>有朋自遠方來，不亦樂乎</li>
-                        <li>溫故而知新，可以為師矣</li>
-                    </ul>
+                    <h3><i class="fas fa-lightbulb"></i> 預設練習內容 (共30句)</h3>
+                    <div id="defaultListContainer">
+                        <!-- JS會動態生成內容 -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -60,27 +56,18 @@
             <div class="settings-content">
                 <div class="settings-section">
                     <h3><i class="fas fa-edit"></i> 默寫內容設定</h3>
-                    <p class="instructions">請輸入成語或名句，每行一則，格式為：前半句,後半句</p>
-                    <textarea id="contentInput" rows="10" placeholder="例如：
-桃李不言,下自成蹊
-己所不欲,勿施於人
-學而不厭,誨人不倦
-有朋自遠方來,不亦樂乎
-溫故而知新,可以為師矣"></textarea>
+                    <p class="instructions">請輸入成語或名句，每行一則，格式為：前半句,後半句（可用逗號、全形逗號、空格分隔）</p>
+                    <textarea id="contentInput" rows="15" placeholder="例如：
+會挽雕弓如滿月,西北望，射天狼
+老驥伏櫪,志在千里
+停杯投箸不能食,拔劍四顧心茫然。欲渡黃河冰塞川，將登太行雪滿山"></textarea>
                     <div class="sample-content">
-                        <h4><i class="fas fa-list"></i> 可用成語名句示例：</h4>
-                        <div class="sample-items">
-                            <span class="sample-item" data-text="桃李不言,下自成蹊">桃李不言，下自成蹊</span>
-                            <span class="sample-item" data-text="己所不欲,勿施於人">己所不欲，勿施於人</span>
-                            <span class="sample-item" data-text="學而不厭,誨人不倦">學而不厭，誨人不倦</span>
-                            <span class="sample-item" data-text="有朋自遠方來,不亦樂乎">有朋自遠方來，不亦樂乎</span>
-                            <span class="sample-item" data-text="溫故而知新,可以為師矣">溫故而知新，可以為師矣</span>
-                            <span class="sample-item" data-text="知之為知之,不知為不知">知之為知之，不知為不知</span>
-                            <span class="sample-item" data-text="三人行,必有我師焉">三人行，必有我師焉</span>
-                            <span class="sample-item" data-text="君子坦蕩蕩,小人長戚戚">君子坦蕩蕩，小人長戚戚</span>
+                        <h4><i class="fas fa-list"></i> 可用成語名句示例（點擊添加）：</h4>
+                        <div class="sample-items" id="sampleItemsContainer">
+                            <!-- JS會動態生成 -->
                         </div>
                         <button id="loadSampleBtn" class="btn btn-secondary">
-                            <i class="fas fa-download"></i> 載入示例內容
+                            <i class="fas fa-download"></i> 載入全部示例內容
                         </button>
                     </div>
                 </div>
