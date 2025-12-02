@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中文成語及名句默寫練習</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-book-open"></i> 中文成語及名句默寫練習</h1>
+            <p class="subtitle">溫故知新，學而時習之</p>
+        </header>
+
+        <!-- 主選單畫面 -->
+        <div id="mainMenu" class="screen active">
+            <div class="menu-content">
+                <div class="menu-icon">
+                    <i class="fas fa-pen-nib"></i>
+                </div>
+                <h2>準備開始練習</h2>
+                <p class="menu-description">
+                    點擊下方按鈕設定練習內容或直接開始默寫。設定中可以選擇默寫內容和題目數量。
+                </p>
+                <div class="button-group">
+                    <button id="settingsBtn" class="btn btn-primary">
+                        <i class="fas fa-cog"></i> 設定練習
+                    </button>
+                    <button id="startBtn" class="btn btn-success">
+                        <i class="fas fa-play"></i> 開始練習
+                    </button>
+                </div>
+                
+                <!-- 預設內容說明 -->
+                <div class="default-content">
+                    <h3><i class="fas fa-lightbulb"></i> 預設練習內容</h3>
+                    <ul id="defaultList">
+                        <li>桃李不言，下自成蹊</li>
+                        <li>己所不欲，勿施於人</li>
+                        <li>學而不厭，誨人不倦</li>
+                        <li>有朋自遠方來，不亦樂乎</li>
+                        <li>溫故而知新，可以為師矣</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 設定畫面 -->
+        <div id="settingsScreen" class="screen">
+            <div class="screen-header">
+                <h2><i class="fas fa-cog"></i> 練習設定</h2>
+                <button id="backToMenuBtn" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> 返回主選單
+                </button>
+            </div>
+            
+            <div class="settings-content">
+                <div class="settings-section">
+                    <h3><i class="fas fa-edit"></i> 默寫內容設定</h3>
+                    <p class="instructions">請輸入成語或名句，每行一則，格式為：前半句,後半句</p>
+                    <textarea id="contentInput" rows="10" placeholder="例如：
+桃李不言,下自成蹊
+己所不欲,勿施於人
+學而不厭,誨人不倦
+有朋自遠方來,不亦樂乎
+溫故而知新,可以為師矣"></textarea>
+                    <div class="sample-content">
+                        <h4><i class="fas fa-list"></i> 可用成語名句示例：</h4>
+                        <div class="sample-items">
+                            <span class="sample-item" data-text="桃李不言,下自成蹊">桃李不言，下自成蹊</span>
+                            <span class="sample-item" data-text="己所不欲,勿施於人">己所不欲，勿施於人</span>
+                            <span class="sample-item" data-text="學而不厭,誨人不倦">學而不厭，誨人不倦</span>
+                            <span class="sample-item" data-text="有朋自遠方來,不亦樂乎">有朋自遠方來，不亦樂乎</span>
+                            <span class="sample-item" data-text="溫故而知新,可以為師矣">溫故而知新，可以為師矣</span>
+                            <span class="sample-item" data-text="知之為知之,不知為不知">知之為知之，不知為不知</span>
+                            <span class="sample-item" data-text="三人行,必有我師焉">三人行，必有我師焉</span>
+                            <span class="sample-item" data-text="君子坦蕩蕩,小人長戚戚">君子坦蕩蕩，小人長戚戚</span>
+                        </div>
+                        <button id="loadSampleBtn" class="btn btn-secondary">
+                            <i class="fas fa-download"></i> 載入示例內容
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3><i class="fas fa-list-ol"></i> 題目數量設定</h3>
+                    <div class="number-selector">
+                        <button id="decreaseBtn" class="number-btn"><i class="fas fa-minus"></i></button>
+                        <input type="number" id="questionCount" min="1" max="50" value="5">
+                        <button id="increaseBtn" class="number-btn"><i class="fas fa-plus"></i></button>
+                        <span class="number-label">題</span>
+                    </div>
+                    <p class="hint">可選擇 1 到 50 題</p>
+                </div>
+                
+                <div class="settings-section">
+                    <h3><i class="fas fa-clock"></i> 練習模式</h3>
+                    <div class="mode-selector">
+                        <label class="mode-option">
+                            <input type="radio" name="mode" value="standard" checked>
+                            <span class="mode-label">
+                                <i class="fas fa-check-circle"></i>
+                                標準模式
+                            </span>
+                            <span class="mode-description">答錯時顯示正確答案，點擊繼續下一題</span>
+                        </label>
+                        <label class="mode-option">
+                            <input type="radio" name="mode" value="strict">
+                            <span class="mode-label">
+                                <i class="fas fa-star"></i>
+                                嚴格模式
+                            </span>
+                            <span class="mode-description">答錯時需重新輸入正確答案才能繼續</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="saveSettingsBtn" class="btn btn-primary">
+                        <i class="fas fa-save"></i> 儲存設定並開始練習
+                    </button>
+                    <button id="resetSettingsBtn" class="btn btn-secondary">
+                        <i class="fas fa-undo"></i> 重置設定
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 答題畫面 -->
+        <div id="quizScreen" class="screen">
+            <div class="quiz-header">
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <div class="quiz-info">
+                    <span class="current-question" id="currentQuestion">1</span>
+                    <span class="total-questions">/ <span id="totalQuestions">5</span></span>
+                    <div class="score-display">
+                        <span class="correct-count" id="correctCount">0</span> 正確 / 
+                        <span class="incorrect-count" id="incorrectCount">0</span> 錯誤
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quiz-content">
+                <div class="question-display">
+                    <div class="question-prefix">請默寫以下名句的後半部分：</div>
+                    <div class="question-text" id="questionText">桃李不言</div>
+                    <div class="answer-indicator">______</div>
+                </div>
+                
+                <div class="answer-section">
+                    <input type="text" id="answerInput" placeholder="請輸入後半句..." autocomplete="off">
+                    <button id="submitAnswerBtn" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> 提交答案
+                    </button>
+                    <button id="nextQuestionBtn" class="btn btn-success" style="display: none;">
+                        <i class="fas fa-forward"></i> 繼續下一題
+                    </button>
+                </div>
+                
+                <div class="feedback-section" id="feedbackSection">
+                    <!-- 答題回饋會顯示在這裡 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 結果畫面 -->
+        <div id="resultScreen" class="screen">
+            <div class="result-header">
+                <h2><i class="fas fa-chart-bar"></i> 練習結果</h2>
+                <button id="restartBtn" class="btn btn-secondary">
+                    <i class="fas fa-redo"></i> 重新練習
+                </button>
+            </div>
+            
+            <div class="result-content">
+                <div class="score-summary">
+                    <div class="score-card correct">
+                        <div class="score-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="score-details">
+                            <div class="score-number" id="finalCorrectCount">0</div>
+                            <div class="score-label">正確答案</div>
+                        </div>
+                    </div>
+                    
+                    <div class="score-card incorrect">
+                        <div class="score-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="score-details">
+                            <div class="score-number" id="finalIncorrectCount">0</div>
+                            <div class="score-label">錯誤答案</div>
+                        </div>
+                    </div>
+                    
+                    <div class="score-card total">
+                        <div class="score-icon">
+                            <i class="fas fa-list-ol"></i>
+                        </div>
+                        <div class="score-details">
+                            <div class="score-number" id="finalTotalCount">0</div>
+                            <div class="score-label">總題數</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accuracy-display">
+                    <div class="accuracy-label">正確率</div>
+                    <div class="accuracy-value" id="accuracyValue">0%</div>
+                    <div class="accuracy-bar">
+                        <div class="accuracy-fill" id="accuracyFill"></div>
+                    </div>
+                </div>
+                
+                <div class="mistakes-section" id="mistakesSection">
+                    <!-- 錯誤題目列表會顯示在這裡 -->
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>中文成語默寫練習 &copy; 2023 | 設計用於教育學習</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
